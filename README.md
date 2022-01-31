@@ -6,24 +6,24 @@
 
 ```tsx
 import React from 'react'
-import { AuthProvider } from '@freevuehub/reacth/google'
+import { Google } from '@freevuehub/reacth'
 
 const CLIENT_KEY = '<Google OAuth Client Key>'
 const App: React.FC = (props) => {
   return (
-    <AuthProvider client-key={CLIENT_KEY}>
+    <Google.Provider client-key={CLIENT_KEY}>
       {props.children}
-    </AuthProvider>
+    </Google.Provider>
   )
 }
 ```
 
 ```tsx
 import React, { useContext } from 'react'
-import { AuthContext } from '@freevuehub/reacth/google'
+import { Google } from '@freevuehub/reacth'
 
 const Home: React.FC = (props) => {
-  const { signIn, signOut, user } = useContext(AuthContext)
+  const { signIn, signOut, user } = useContext(Google.Context)
   
   const onSignInClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
