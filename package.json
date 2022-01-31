@@ -1,6 +1,6 @@
 {
   "name": "@freevuehub/reacth",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "description": "React Auth Context",
   "main": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
