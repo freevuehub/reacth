@@ -101,10 +101,10 @@ const AuthProvider: React.FC<IProps> = (props) => {
       setSignIn(onSignIn)
       setSignOut(onSignOut)
       setUser({
-        email: profile.getEmail(),
-        id: profile.getId(),
-        image: profile.getImageUrl(),
-        name: profile.getName(),
+        email: profile?.getEmail(),
+        id: profile?.getId(),
+        image: profile?.getImageUrl(),
+        name: profile?.getName(),
       })
     }
 
@@ -136,6 +136,8 @@ AuthProvider.defaultProps = {
   scope: 'profile email'
 }
 
-export { AuthContext }
+export default {
+  Provider: AuthProvider,
+  Context: AuthContext,
+}
 
-export default AuthProvider
