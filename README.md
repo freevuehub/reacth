@@ -1,5 +1,11 @@
 # Reacth (React-Auth)
 
+## Installation
+
+NPM: `npm install @freevue/reacth --save`
+
+Yarn: `yarn add @freevue/reacth`
+
 ## Usage
 
 ### Google
@@ -27,10 +33,8 @@ const Home: React.FC = (props) => {
   
   const onSignInClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-
-    const profile = await signIn()
     
-    console.log(profile) // User Profile
+    await signIn()
   }
   const onSignOutClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -49,3 +53,12 @@ const Home: React.FC = (props) => {
   )
 }
 ```
+
+#### User Response Data
+
+| Key | Type |
+| --- | --- |
+| id | Int |
+| name | String |
+| email | String |
+| image | String |
