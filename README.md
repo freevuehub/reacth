@@ -2,9 +2,9 @@
 
 ## Installation
 
-NPM: `npm install @freevue/reacth --save`
+NPM: `npm install @freevuehub/reacth --save`
 
-Yarn: `yarn add @freevue/reacth`
+Yarn: `yarn add @freevuehub/reacth`
 
 ## Usage
 
