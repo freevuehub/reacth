@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { GOOGLE_JS_ID, SCRIPT_TAG, GOOGLE_API_URL } from './constant'
-import { ISignInResponse, IUser } from './types'
+import { ISignInResponse, IUser, IButtonRender } from './types'
 
 declare global {
   interface IInitState {
@@ -11,6 +11,9 @@ declare global {
   interface Window {
     googleSDKLoaded: () => void
     gapi: {
+      signin2: {
+        render: IButtonRender
+      },
       load: any
       auth2: {
         init: (state: IInitState) => any
@@ -23,6 +26,7 @@ interface IDefaultValue {
   signIn: any
   signOut: any
   user: IUser
+  render: IButtonRender
 }
 
 interface IProps {
@@ -39,6 +43,7 @@ const initialUserState = {
 const initialState = {
   signIn: null,
   signOut: null,
+  render: () => {},
   user: initialUserState
 }
 
@@ -125,6 +130,7 @@ const AuthProvider: React.FC<IProps> = (props) => {
         signIn,
         signOut,
         user,
+        render: window.gapi.signin2.render
       }}
     >
       {props.children}
