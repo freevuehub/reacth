@@ -1,6 +1,6 @@
 {
   "name": "@freevuehub/auth",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "React Auth Context",
   "main": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
@@ -8,9 +8,6 @@
   "scripts": {
     "build": "rm -rf ./dist && yarn rollup -c && tsc --emitDeclarationOnly",
     "test": "jest"
-  },
-  "browser": {
-    "child_process": false
   },
   "repository": {
     "type": "git",
