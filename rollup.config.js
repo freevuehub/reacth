@@ -1,10 +1,11 @@
 import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import babelPluginFactory from 'rollup-plugin-babel'
-import pkg from './package.json'
 import external from 'rollup-plugin-peer-deps-external'
 import typescript from 'rollup-plugin-typescript2'
 import { uglify } from 'rollup-plugin-uglify'
+import json from '@rollup/plugin-json'
+import pkg from './package.json' assert { type: 'json' }
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
@@ -19,11 +20,12 @@ export default {
     nodeResolve({ extensions }),
     commonjs({ include: 'node_modules/**' }),
     babelPluginFactory({
-      exclude: "node_modules/**",
+      exclude: 'node_modules/**',
       extensions,
       include: ['src/**/*'],
       runtimeHelpers: true
-    })
+    }),
+    json(),
   ],
   rootDir: 'src',
   output: [
@@ -32,5 +34,5 @@ export default {
       format: 'cjs',
       sourcemap: true,
     }
-  ]
+  ],
 }

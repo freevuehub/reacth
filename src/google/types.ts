@@ -1,5 +1,3 @@
-import { JWTPayload } from 'jose'
-
 export interface IUser {
   email: string
   id: number
@@ -87,7 +85,7 @@ export interface IPromptNotification {
   getMomentType: () => TypeGetMomentType
 }
 
-export interface ICredentialDecodedPayload extends JWTPayload {
+export interface ICredentialDecodedPayload {
   // hd: string
   // email: string
   // email_verified: boolean
@@ -99,9 +97,11 @@ export interface ICredentialDecodedPayload extends JWTPayload {
 }
 
 export type TypeInitializeCallback = (
-  clientId: string,
-  credential: string,
-  select_by: TypeSelectBy
+  payload: {
+    clientId: string
+    credential: string
+    select_by: TypeSelectBy
+  }
 ) => void
 
 export type TypeRenderButton = (
