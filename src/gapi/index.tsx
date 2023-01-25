@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GOOGLE_JS_ID, SCRIPT_TAG, GOOGLE_API_URL } from './constant'
 import { IUser } from './types'
 
@@ -26,7 +26,7 @@ const initialState = {
   user: initialUserState
 }
 
-const onLoadGoogleApi = (load: () => void) => {
+const onLoadGoogleApi = (load: (window: Window) => void) => {
   if (document.getElementById(GOOGLE_JS_ID)) return
 
   const scriptTag: HTMLScriptElement = document.getElementsByTagName(SCRIPT_TAG)[0]
@@ -36,39 +36,45 @@ const onLoadGoogleApi = (load: () => void) => {
   scriptElement.src = GOOGLE_API_URL
   scriptElement.async = true
   scriptElement.defer = true
-  scriptElement.onload = load
+  scriptElement.onload = () => {
+    load(window)
+  }
 
   scriptTag.parentNode?.insertBefore(scriptElement, scriptTag)
 }
 
 const AuthContext = React.createContext<IDefaultValue>(initialState)
 const AuthProvider: React.FC<IProps> = (props) => {
-  const onGoogleSDKLoad = (client_id: string, scope: string) => {
+  const [instance, setInstance] = useState<any>(null)
+
+  const onGoogleSDKLoad = (window: Window, client_id: string, scope: string) => {
     const onGapiLoad = async () => {
       await window.gapi.auth2.init({
         client_id,
         scope,
       })
+
+      setInstance(window.gapi.auth2.getAuthInstance())
     }
 
     window.gapi.load('auth2', onGapiLoad)
   }
 
   const useMountedEffect = () => {
-    onLoadGoogleApi(() => {
-      onGoogleSDKLoad(props.clientKey, 'profile email')
+    onLoadGoogleApi((window) => {
+      onGoogleSDKLoad(window, props.clientKey, 'profile email')
     })
   }
 
-  useEffect(useMountedEffect, [])
+  useEffect(useMountedEffect, [props])
 
   const signIn = async () => {
-    await window.gapi.auth2.getAuthInstance().signIn()
+    await instance?.signIn()
 
-    return window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
+    return instance?.currentUser.get().getAuthResponse()
   }
   const signOut = async () => {
-    await window.gapi.auth2.getAuthInstance().signOut()
+    await instance?.signOut()
   }
 
   return (
@@ -76,7 +82,7 @@ const AuthProvider: React.FC<IProps> = (props) => {
       value={{
         signIn,
         signOut,
-        user: window.gapi?.auth2.getAuthInstance().currentUser.get().getBasicProfile()
+        user: instance?.currentUser.get().getBasicProfile()
       }}
     >
       {props.children}
