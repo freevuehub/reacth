@@ -1,4 +1,3 @@
-import { IButtonRender } from '~/gapi/types'
 import { IAccounts } from '~/google/types'
 
 declare global {
@@ -10,16 +9,33 @@ declare global {
   interface Window {
     googleSDKLoaded: () => void
     gapi: {
-      signin2: {
-        render: IButtonRender
-      },
+      auth2: {
+        getAuthInstance: () => {
+          signIn: () => void
+          signOut: () => void
+          currentUser: {
+            get: () => {
+              getBasicProfile: () => any
+              getAuthResponse: () => {
+                access_token: string
+                expires_at: number
+                expires_in: number
+                first_issued_at: number
+                id_token: string
+                idpId: string
+                login_hint: string
+                scope: string
+                token_type: string
+              }
+            }
+          }
+        }
+        init: (state: IInitState) => any
+      }
       load: (
         type: string,
         callback: () => void
       ) => void
-      auth2: {
-        init: (state: IInitState) => any
-      }
     }
     google: {
       accounts: IAccounts

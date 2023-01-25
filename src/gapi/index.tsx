@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { GOOGLE_JS_ID, SCRIPT_TAG, GOOGLE_API_URL } from './constant'
-import { IUser, IButtonRender } from './types'
+import { IUser } from './types'
 
 interface IDefaultValue {
   signIn: any
   signOut: any
   user: IUser
-  render: IButtonRender
 }
 
 interface IProps {
   clientKey: string
-  scope?: string
   children: React.ReactElement
+  Suspense?: React.ReactElement
 }
 
 const initialUserState = {
@@ -24,11 +23,10 @@ const initialUserState = {
 const initialState = {
   signIn: null,
   signOut: null,
-  render: () => {},
   user: initialUserState
 }
 
-const onLoadGoogleApi = () => {
+const onLoadGoogleApi = (load: () => void) => {
   if (document.getElementById(GOOGLE_JS_ID)) return
 
   const scriptTag: HTMLScriptElement = document.getElementsByTagName(SCRIPT_TAG)[0]
@@ -38,55 +36,52 @@ const onLoadGoogleApi = () => {
   scriptElement.src = GOOGLE_API_URL
   scriptElement.async = true
   scriptElement.defer = true
+  scriptElement.onload = load
 
   scriptTag.parentNode?.insertBefore(scriptElement, scriptTag)
 }
 
 const AuthContext = React.createContext<IDefaultValue>(initialState)
 const AuthProvider: React.FC<IProps> = (props) => {
-  const [googleAuth, setGoogleAuth] = useState<any>()
-  const [signIn2, setSignIn2] = useState<any>()
-
-  const onGoogleSDKLoad = () => {
+  const onGoogleSDKLoad = (client_id: string, scope: string) => {
     const onGapiLoad = async () => {
-      const googleAuth = await window.gapi.auth2.init({
-        client_id: props.clientKey,
-        scope: props?.scope || 'profile email',
+      await window.gapi.auth2.init({
+        client_id,
+        scope,
       })
-
-      setGoogleAuth(googleAuth)
-      setSignIn2(window.gapi.signin2)
     }
 
     window.gapi.load('auth2', onGapiLoad)
   }
 
   const useMountedEffect = () => {
-    onLoadGoogleApi()
-
-    window.onload = () => {
-      onGoogleSDKLoad()
-    }
+    onLoadGoogleApi(() => {
+      onGoogleSDKLoad(props.clientKey, 'profile email')
+    })
   }
 
-  useEffect(useMountedEffect, [props.clientKey])
+  useEffect(useMountedEffect, [])
+
+  const signIn = async () => {
+    await window.gapi.auth2.getAuthInstance().signIn()
+
+    return window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
+  }
+  const signOut = async () => {
+    await window.gapi.auth2.getAuthInstance().signOut()
+  }
 
   return (
     <AuthContext.Provider
       value={{
-        signIn: googleAuth?.signIn,
-        signOut: googleAuth?.signOut,
-        user: googleAuth?.currentUser.get().getBasicProfile(),
-        render: signIn2?.render
+        signIn,
+        signOut,
+        user: window.gapi?.auth2.getAuthInstance().currentUser.get().getBasicProfile()
       }}
     >
       {props.children}
     </AuthContext.Provider>
   )
-}
-
-AuthProvider.defaultProps = {
-  scope: 'profile email'
 }
 
 export default {

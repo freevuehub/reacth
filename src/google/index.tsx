@@ -45,7 +45,7 @@ const AuthProvider: React.FC<IProps> = (props) => {
   const useGoogleAccountSet = () => {
     onLoadGoogleSDK(GOOGLE_ACCOUNTS_ID, GOOGLE_ACCOUNT_URL)
 
-    window.onload = () => {
+    window.addEventListener('load', () => {
       window.google.accounts.id.initialize({
         client_id: props.clientKey,
         callback: ({ credential }) => {
@@ -54,7 +54,7 @@ const AuthProvider: React.FC<IProps> = (props) => {
       })
 
       setAccounts(window.google.accounts)
-    }
+    })
   }
 
   useEffect(useGoogleAccountSet, [props.clientKey])
